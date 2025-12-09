@@ -1,0 +1,389 @@
+{
+  "info": {
+    "name": "Product Traceability API",
+    "description": "API Collection for Product Traceability System\n\nQuick Start:\n1. Import this collection and environment\n2. Login with test user\n3. Access token is saved automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "    pm.environment.set('refresh_token', jsonData.refresh);",
+                  "    console.log('✅ Logged in successfully!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{manufacturer_email}}\",\n  \"password\": \"{{test_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/auth/login/",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "login", ""]
+            },
+            "description": "Login with test user credentials"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/users/me/",
+              "host": ["{{api_url}}"],
+              "path": ["users", "me", ""]
+            },
+            "description": "Get currently logged in user details"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/auth/logout/",
+              "host": ["{{api_url}}"],
+              "path": ["auth", "logout", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/products/",
+              "host": ["{{api_url}}"],
+              "path": ["products", ""]
+            },
+            "description": "Get all products (filtered by user role)"
+          }
+        },
+        {
+          "name": "Get Product Details",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Make sure product_id is set in environment"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", ""]
+            },
+            "description": "Get detailed product information including all steps"
+          }
+        },
+        {
+          "name": "Create Product (Manufacturer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('product_id', jsonData.id);",
+                  "    console.log('✅ Product created: ' + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Product\",\n  \"sku\": \"TEST-SKU-001\",\n  \"batch_number\": \"BATCH-001\",\n  \"description\": \"Test product for API testing\",\n  \"category\": null,\n  \"production_date\": \"2025-12-09\",\n  \"unit_price\": 99.99,\n  \"currency\": \"DZ\",\n  \"current_location\": \"Factory - Algiers\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/",
+              "host": ["{{api_url}}"],
+              "path": ["products", ""]
+            },
+            "description": "Create a new product (Manufacturer only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Product Steps",
+      "item": [
+        {
+          "name": "Add Quality Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"QUALITY_CHECK\",\n  \"location\": \"Quality Control Lab\",\n  \"details\": {\n    \"description\": \"Quality inspection passed\",\n    \"notes\": \"All parameters within range\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Manufacturer adds quality check"
+          }
+        },
+        {
+          "name": "Transport Start",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"TRANSPORT_START\",\n  \"location\": \"Factory Loading Dock\",\n  \"details\": {\n    \"description\": \"Product picked up for delivery\",\n    \"notes\": \"Package sealed and loaded\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Transport company picks up product"
+          }
+        },
+        {
+          "name": "Transport End",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"TRANSPORT_END\",\n  \"location\": \"Warehouse Receiving Dock\",\n  \"details\": {\n    \"description\": \"Product delivered\",\n    \"notes\": \"Delivery completed successfully\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Transport company completes delivery"
+          }
+        },
+        {
+          "name": "Warehouse Entry",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"WAREHOUSE_ENTRY\",\n  \"location\": \"Warehouse Storage A12\",\n  \"details\": {\n    \"description\": \"Product received and stored\",\n    \"notes\": \"Package inspected and stored\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Warehouse receives product"
+          }
+        },
+        {
+          "name": "Warehouse Exit",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"WAREHOUSE_EXIT\",\n  \"location\": \"Warehouse Loading Dock\",\n  \"details\": {\n    \"description\": \"Product shipped to store\",\n    \"notes\": \"Package prepared for delivery\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Warehouse ships product to store"
+          }
+        },
+        {
+          "name": "Store Entry",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"STORE_ENTRY\",\n  \"location\": \"Retail Store Downtown\",\n  \"details\": {\n    \"description\": \"Product received at store\",\n    \"notes\": \"Placed on display shelf\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Store receives product"
+          }
+        },
+        {
+          "name": "Sale",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_type\": \"SALE\",\n  \"location\": \"Retail Store Downtown\",\n  \"details\": {\n    \"description\": \"Product sold to customer\",\n    \"notes\": \"Transaction completed\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/products/{{product_id}}/add_step/",
+              "host": ["{{api_url}}"],
+              "path": ["products", "{{product_id}}", "add_step", ""]
+            },
+            "description": "Store records sale"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/dashboard/stats/",
+              "host": ["{{api_url}}"],
+              "path": ["dashboard", "stats", ""]
+            },
+            "description": "Get dashboard statistics for current user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Admin - Users",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/users/",
+              "host": ["{{api_url}}"],
+              "path": ["users", ""]
+            },
+            "description": "Get all users (Admin only)"
+          }
+        },
+        {
+          "name": "Get Pending Registrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_url}}/registration-requests/?status=PENDING",
+              "host": ["{{api_url}}"],
+              "path": ["registration-requests", ""],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            "description": "Get pending registration requests (Admin only)"
+          }
+        }
+      ]
+    }
+  ]
+}
