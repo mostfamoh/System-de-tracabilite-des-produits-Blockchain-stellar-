@@ -91,12 +91,6 @@ const Register = () => {
           <h2 className="text-center text-3xl font-extrabold text-gray-900">
             Register Account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            For quick client access,{' '}
-            <Link to="/register/client" className="font-medium text-primary-600 hover:text-primary-500">
-              use simplified registration
-            </Link>
-          </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -166,7 +160,9 @@ const Register = () => {
                 onChange={handleChange}
                 className="input-field mt-1"
               >
-                {roles.map((role) => (
+                {roles
+                .filter((role) => role.value !== "CLIENT") 
+                .map((role) => (
                   <option key={role.value} value={role.value}>
                     {role.label}
                   </option>

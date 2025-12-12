@@ -99,7 +99,7 @@ const WarehouseDashboard = () => {
         </div>
         <button
           onClick={() => navigate('/warehouse/products')}
-          className="btn bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+          className=" bg-purple-500 hover:bg-purple-600 text-white flex items-center gap-2 px-4 py-2 rounded-lg"
         >
           <FaBoxOpen /> Manage Products
         </button>

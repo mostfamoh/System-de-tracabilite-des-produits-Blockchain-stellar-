@@ -890,7 +890,7 @@ class ClientProductListView(generics.ListAPIView):
     Vue pour les clients pour lister tous les produits disponibles.
     Accessible aux clients authentifiés.
     """
-    permission_classes = [IsAuthenticated, IsClient]
+    permission_classes = [AllowAny]
     serializer_class = serializers.ClientProductListSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]

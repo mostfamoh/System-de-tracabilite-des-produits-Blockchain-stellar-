@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Auth pages
 import Login from './pages/Auth/Login';
-import ClientRegister from './pages/Auth/ClientRegister';
 import Register from './pages/Auth/Register';
 
 // Public pages
@@ -15,9 +14,7 @@ import ProductVerification from './pages/Public/ProductVerification';
 import ProductDetail from './pages/ProductDetail';
 import TestPage from './pages/TestPage';
 
-// Client pages
-import ClientDashboard from './pages/Client/Dashboard';
-import ClientProducts from './pages/Client/Products';
+
 
 // Manufacturer pages
 import ManufacturerDashboard from './pages/Manufacturer/Dashboard';
@@ -59,7 +56,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/test" element={<TestPage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register/client" element={<ClientRegister />} />
             <Route path="/register" element={<Register />} />
             <Route path="/scan" element={<QRScanner />} />
             <Route path="/product/:id/verify" element={<ProductVerification />} />
@@ -68,30 +64,11 @@ function App() {
             <Route
               path="/product/:id"
               element={
-                <PrivateRoute roles={['ADMIN', 'FABRICANT', 'TRANSPORT', 'ENTREPOT', 'MAGASIN', 'CLIENT']}>
+                <PrivateRoute roles={['ADMIN', 'FABRICANT', 'TRANSPORT', 'ENTREPOT', 'MAGASIN']}>
                   <ProductDetail />
                 </PrivateRoute>
               }
             />
-
-            {/* Client routes */}
-            <Route
-              path="/client/dashboard"
-              element={
-                <PrivateRoute roles={['CLIENT']}>
-                  <ClientDashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/client/products"
-              element={
-                <PrivateRoute roles={['CLIENT']}>
-                  <ClientProducts />
-                </PrivateRoute>
-              }
-            />
-
             {/* Manufacturer routes */}
             <Route
               path="/manufacturer/dashboard"

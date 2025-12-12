@@ -56,7 +56,7 @@ const Login = () => {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link to="/register/client" className="font-medium text-primary-600 hover:text-primary-500">
+            <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
               create a new client account
             </Link>
           </p>
@@ -70,7 +70,7 @@ const Login = () => {
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaEnvelope className="h-5 w-5 text-gray-400" />
+                  <FaEnvelope className=" h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="email"
@@ -79,7 +79,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="input-field pl-10"
+                  className="input-field"
                   placeholder="your@email.com"
                 />
               </div>

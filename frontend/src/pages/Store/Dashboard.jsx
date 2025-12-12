@@ -103,7 +103,7 @@ const StoreDashboard = () => {
         </div>
         <button
           onClick={() => navigate('/store/products')}
-          className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
+          className="bg-indigo-500 hover:bg-indigo-600 text-white flex items-center gap-2 px-4 py-2 rounded-lg"
         >
           <FaBoxOpen /> Manage Products
         </button>

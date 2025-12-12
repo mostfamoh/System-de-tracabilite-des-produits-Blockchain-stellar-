@@ -102,7 +102,7 @@ const TransportDashboard = () => {
         </div>
         <button
           onClick={() => navigate('/transport/products')}
-          className="btn bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 px-4 py-2 rounded-lg"
         >
           <FaBoxOpen /> Manage Products
         </button>

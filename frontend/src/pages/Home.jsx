@@ -1,31 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaQrcode, FaShieldAlt, FaChartLine, FaUsers } from 'react-icons/fa';
-
+import ClientProducts from './Client/Products'
 const Home = () => {
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="text-center py-20">
-        <h1 className="text-5xl font-bold text-gray-900 mb-6">
-          Product Traceability System
+      <section className="flex items-center justify-between w-full">
+        <div className="w-1/2">
+        <h1 className="text-5xl font-bold text-gray-900 mb-6 text-left break-words">
+          Track Every Product From Source To Store 
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          Track, verify, and ensure the authenticity of products throughout the supply chain
-          using blockchain technology
+          Transparent supply chain management powered by blockchain technology.
+           Verify authenticity, track movement, and ensure trust.
         </p>
-        <div className="flex justify-center space-x-4">
-          <Link to="/register/client" className="btn-primary px-8 py-3 text-lg">
-            Get Started
-          </Link>
-          <Link to="/scan" className="btn-secondary px-8 py-3 text-lg">
+        <div className="flex space-x-4">
+          <Link to="/scan" className="btn-primary px-8 py-3 text-lg">
             Scan QR Code
           </Link>
+          <Link href="#client-products" className="btn-secondary px-8 py-3 text-lg">
+            Go to Products
+          </Link>
         </div>
+        </div>
+
+        <div className="card bg-base-100 w-96 shadow-sm">
+      <div className="card-body">
+        <h2>Product Status
+            Verified Authentic</h2>
+      </div>
+    </div>
       </section>
+      
 
       {/* Features */}
-      <section className="grid md:grid-cols-4 gap-8">
+      <ClientProducts in="client-products" />
+
+ <section className="grid md:grid-cols-4 gap-8">
         {[
           {
             icon: FaQrcode,
@@ -58,7 +70,7 @@ const Home = () => {
           );
         })}
       </section>
-
+      
       {/* How It Works */}
       <section className="bg-white p-8 rounded-xl shadow-md">
         <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
@@ -83,7 +95,7 @@ const Home = () => {
       <section className="bg-primary-600 text-white p-12 rounded-xl text-center">
         <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
         <p className="text-xl mb-8">Join thousands of users tracking products worldwide</p>
-        <Link to="/register/client" className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
+        <Link to="/register" className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
           Create Free Account
         </Link>
       </section>

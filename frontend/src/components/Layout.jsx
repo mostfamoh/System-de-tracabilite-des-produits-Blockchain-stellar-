@@ -35,7 +35,6 @@ const Layout = ({ children }) => {
       case 'ADMIN':
         return [
           { path: '/admin/dashboard', label: 'Dashboard', icon: FaChartBar },
-          { path: '/admin/users', label: 'Users', icon: FaUsers },
           { path: '/admin/requests', label: 'Requests', icon: FaClipboardCheck },
           { path: '/admin/products', label: 'Products', icon: FaBoxOpen },
         ];
@@ -129,7 +128,7 @@ const Layout = ({ children }) => {
                 </>
               ) : (
                 <Link
-                  to="/register/client"
+                  to="/register"
                   className="px-4 py-2 bg-primary-600 text-white rounded-md text-sm font-medium hover:bg-primary-700"
                 >
                   Sign Up
