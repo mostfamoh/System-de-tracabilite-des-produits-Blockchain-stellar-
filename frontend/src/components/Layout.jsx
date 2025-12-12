@@ -38,6 +38,7 @@ const Layout = ({ children }) => {
           { path: '/admin/users', label: 'Users', icon: FaUsers },
           { path: '/admin/requests', label: 'Requests', icon: FaClipboardCheck },
           { path: '/admin/products', label: 'Products', icon: FaBoxOpen },
+          { path: '/scan', label: 'Scan QR', icon: FaQrcode },
         ];
       case 'FABRICANT':
         return [

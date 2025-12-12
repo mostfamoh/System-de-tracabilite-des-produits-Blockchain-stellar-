@@ -516,6 +516,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), IsOwnerOrAdmin()]
         elif self.action == 'add_step':
             return [IsAuthenticated(), CanAddProductStep()]
+        elif self.action == 'verify_chain':
+            return [IsAuthenticated(), IsAdmin()]
         else:
             return super().get_permissions()
     
@@ -607,6 +609,81 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'])
+    def verify_chain(self, request, pk=None):
+        """
+        Vérifie l'intégrité de la chaîne de traçabilité d'un produit sur Stellar.
+        Accessible uniquement aux administrateurs.
+        Retourne un rapport détaillé pour chaque étape/transaction.
+        """
+        from .stellar_service.stellar_service import get_stellar_service
+
+        product = self.get_object()
+        stellar = get_stellar_service()
+
+        # Rassembler toutes les transactions connues pour le produit
+        steps = product.steps.order_by('timestamp').all()
+        records = product.blockchain_records.order_by('created_at').all()
+
+        step_results = []
+        all_verified = True
+
+        for step in steps:
+            tx_id = step.blockchain_transaction_id
+            if not tx_id:
+                step_results.append({
+                    'step_id': str(step.id),
+                    'step_type': step.step_type,
+                    'transaction_id': None,
+                    'verified': False,
+                    'message': 'No transaction recorded for this step'
+                })
+                all_verified = False
+                continue
+
+            result = stellar.verify_transaction(tx_id)
+            verified = bool(result.get('verified')) and result.get('success', False)
+            if not verified:
+                all_verified = False
+
+            step_results.append({
+                'step_id': str(step.id),
+                'step_type': step.step_type,
+                'transaction_id': tx_id,
+                'verified': verified,
+                'details': result
+            })
+
+        record_results = []
+        for rec in records:
+            tx_id = rec.transaction_hash
+            result = stellar.verify_transaction(tx_id)
+            verified = bool(result.get('verified')) and result.get('success', False)
+            if not verified:
+                all_verified = False
+
+            record_results.append({
+                'record_id': rec.id,
+                'transaction_hash': tx_id,
+                'step_id': rec.step.id if rec.step else None,
+                'verified': verified,
+                'memo': rec.memo,
+                'details': result
+            })
+
+        report = {
+            'product_id': str(product.id),
+            'product_name': product.name,
+            'overall_chain_verified': all_verified,
+            'steps_count': steps.count(),
+            'records_count': records.count(),
+            'steps': step_results,
+            'blockchain_records': record_results,
+            'generated_at': timezone.now().isoformat()
+        }
+
+        return Response(report)
     
     def _can_add_step(self, user, product, step_type):
         """Vérifie si l'utilisateur peut ajouter cette étape."""

@@ -79,6 +79,11 @@ const productService = {
     const response = await api.post(`/products/${productId}/generate_qr/`);
     return response.data;
   },
+  // Verify full product chain (admin)
+  verifyChain: async (productId) => {
+    const response = await api.post(`/products/${productId}/verify_chain/`);
+    return response.data;
+  },
 };
 
 export default productService;
