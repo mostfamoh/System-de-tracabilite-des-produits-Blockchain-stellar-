@@ -35,6 +35,12 @@ const productService = {
     });
     return response.data;
   },
+  uploadProductImage: async (productId, formDataImage) => {
+  const response = await axios.post(`/api/products/${productId}/upload-image/`, formDataImage, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+},
 
   // Update product
   updateProduct: async (id, data) => {
@@ -79,6 +85,11 @@ const productService = {
     const response = await api.post(`/products/${productId}/generate_qr/`);
     return response.data;
   },
+   verifyChain: async (productId) => {
+    const response = await api.post(`/products/${productId}/verify_chain/`);
+    return response.data;
+  },
 };
+
 
 export default productService;

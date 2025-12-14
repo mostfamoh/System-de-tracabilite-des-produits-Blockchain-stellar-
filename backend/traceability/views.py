@@ -437,6 +437,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
     def get_queryset(self):
         user = self.request.user
         queryset = Product.objects.all()

@@ -20,7 +20,9 @@ const CreateProduct = () => {
     unit_price: '',
     currency: 'DZ',
     current_location: '',
+    image:null,
   });
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -43,13 +45,16 @@ const CreateProduct = () => {
       [name]: value
     }));
   };
+  const handleImageChange = (e) => {
+  setImage(e.target.files[0]); 
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Prepare data - remove empty optional fields
+      
       const submitData = { ...formData };
       
       if (!submitData.category) delete submitData.category;
@@ -59,6 +64,15 @@ const CreateProduct = () => {
       if (!submitData.current_location) delete submitData.current_location;
 
       await productService.createProduct(submitData);
+      const productId = response.id;
+
+    
+    if (image) {
+      const formDataImage = new FormData();
+      formDataImage.append("image", image);
+
+      await productService.uploadProductImage(productId, formDataImage);
+    }
       toast.success('Product created successfully!');
       navigate('/manufacturer/products');
     } catch (error) {
@@ -213,7 +227,6 @@ const CreateProduct = () => {
                   />
                 </div>
               </div>
-
               <div>
                 <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
                   Weight (kg)
@@ -252,6 +265,32 @@ const CreateProduct = () => {
               </div>
             </div>
           </div>
+         
+          <div className="text-center">
+            <p className='text-xl font-semibold text-gray-800 mb-4'>Product Image</p>
+          <label
+            htmlFor="file-upload"
+            className="cursor-pointer btn-primary text-white font-semibold py-2 px-4 rounded mr-4"
+          >
+            Choose Image
+          </label>
+          <span id="file-name" className="text-gray-700">
+            {formData.image?.name || "No file chosen"}
+          </span>
+          <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                image: e.target.files[0],
+              }))
+            }
+          />
+        </div>
+
 
           {/* Pricing & Location */}
           <div className="border-b border-gray-200 pb-6">

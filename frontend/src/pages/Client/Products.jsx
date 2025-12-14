@@ -50,10 +50,6 @@ const ClientProducts = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-        <Link to="/scan" className="btn-primary flex items-center space-x-2">
-          <FaQrcode />
-          <span>Scan QR Code</span>
-        </Link>
       </div>
 
       {/* Filters */}
@@ -104,20 +100,20 @@ const ClientProducts = () => {
         <>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
+               
               <div key={product.id} className="bg-white rounded-xl shadow-md overflow-hidden card-hover">
-                {/* Product Image/QR */}
-                <div className="h-48 bg-gray-100 flex items-center justify-center">
-                  {product.qr_code_url ? (
+                <div className="  flex items-center justify-center">
+                  {product.image_url ? (
                     <img
-                      src={product.qr_code_url}
+                      src={product.image_url}
                       alt={product.name}
-                      className="h-full w-full object-contain p-4"
+                      className="h-full w-full object-contain"
                     />
                   ) : (
                     <FaBox className="h-20 w-20 text-gray-400" />
                   )}
+                  
                 </div>
-
                 {/* Product Info */}
                 <div className="p-4 space-y-3">
                   <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>

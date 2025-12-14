@@ -166,6 +166,10 @@ QR_CODE_DIR = os.path.join(MEDIA_ROOT, 'qrcodes')
 if not os.path.exists(QR_CODE_DIR):
     os.makedirs(QR_CODE_DIR)
 
+Image_DIR = os.path.join(MEDIA_ROOT, 'images')
+if not os.path.exists(Image_DIR):
+    os.makedirs(Image_DIR)
+
 # Frontend URL for QR code generation
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 

@@ -93,7 +93,7 @@ const ProductVerification = () => {
                   className="w-48 h-48 object-contain"
                 />
                 <p className="text-center text-xs text-gray-600 mt-2">Scan to verify</p>
-              </div>
+              </div>           
             </div>
           )}
 

@@ -378,7 +378,9 @@ class ProductSerializer(serializers.ModelSerializer):
     )
     
     qr_code_url = serializers.SerializerMethodField()
-    
+
+    image_url = serializers.SerializerMethodField()
+
     category_name = serializers.CharField(
         source='category.name',
         read_only=True
@@ -392,13 +394,12 @@ class ProductSerializer(serializers.ModelSerializer):
             'production_date', 'expiration_date', 'weight', 'dimensions',
             'unit_price', 'currency', 'current_status', 'status_display',
             'current_location', 'qr_code', 'qr_code_url', 'blockchain_hash',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at','image','image_url'
         ]
         read_only_fields = [
             'id', 'sku', 'manufacturer', 'qr_code', 'qr_code_url', 'blockchain_hash',
             'created_at', 'updated_at', 'manufacturer_name', 'status_display', 'category_name'
         ]
-    
     def get_qr_code_url(self, obj):
         """Retourne l'URL complète du QR code"""
         if obj.qr_code:
@@ -407,6 +408,12 @@ class ProductSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.qr_code.url)
         return None
     
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+        return None
     def validate_batch_number(self, value):
         """Valider le numéro de lot"""
         if not value:
@@ -421,7 +428,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(ProductSerializer):
     """Serializer détaillé pour les produits avec étapes"""
-    
+    serializers.ImageField(required=False)
     steps = serializers.SerializerMethodField()
     
     class Meta(ProductSerializer.Meta):
@@ -536,7 +543,7 @@ class ClientProductListSerializer(serializers.ModelSerializer):
     )
     
     qr_code_url = serializers.SerializerMethodField()
-    
+    image_url = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
     
     class Meta:
@@ -544,12 +551,12 @@ class ClientProductListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'manufacturer_name',
             'category_name', 'production_date', 'unit_price', 'currency',
-            'current_status', 'status_display', 'qr_code_url', 'created_at'
+            'current_status', 'status_display', 'qr_code_url', 'created_at','image_url'
         ]
         read_only_fields = [
             'id', 'name', 'description', 'manufacturer_name',
             'category_name', 'production_date', 'unit_price', 'currency',
-            'current_status', 'status_display', 'qr_code_url', 'created_at'
+            'current_status', 'status_display', 'qr_code_url', 'created_at','image_url'
         ]
     
     def get_category_name(self, obj):
@@ -564,6 +571,14 @@ class ClientProductListSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.qr_code.url)
             # Fallback si pas de request dans le contexte
             return obj.qr_code.url if obj.qr_code else None
+        return None
+    def get_image_url(self, obj):
+        """Retourne l'URL complète de l'image"""
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url if obj.image else None
         return None
 
 

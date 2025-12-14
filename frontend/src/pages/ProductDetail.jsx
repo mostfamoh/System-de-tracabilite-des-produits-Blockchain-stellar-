@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaBox, FaIndustry, FaCalendar, FaMapMarkerAlt, FaQrcode, FaHistory, FaCheckCircle, FaTruck, FaWarehouse, FaStore } from 'react-icons/fa';
 import api from '../services/api';
+import productService from '../services/productService';
+import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 
@@ -11,6 +13,9 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [steps, setSteps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyReport, setVerifyReport] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchProductDetails();
@@ -27,6 +32,27 @@ const ProductDetail = () => {
       toast.error('Failed to load product details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyChain = async () => {
+    if (!user || user.role !== 'ADMIN') {
+      toast.error('Only admins can verify the product chain');
+      return;
+    }
+
+    try {
+      setVerifying(true);
+      setVerifyReport(null);
+      const data = await productService.verifyChain(id);
+      setVerifyReport(data);
+      toast.success('Chain verification report received');
+    } catch (error) {
+      console.error('Chain verification failed', error);
+      toast.error('Chain verification failed');
+      setVerifyReport({ error: error?.response?.data || String(error) });
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -259,6 +285,23 @@ const ProductDetail = () => {
                   <FaCheckCircle />
                   <span className="text-sm font-medium">Verified on Blockchain</span>
                 </div>
+
+                {user && user.role === 'ADMIN' && (
+                  <div className="mt-4">
+                    <button
+                      onClick={handleVerifyChain}
+                      disabled={verifying}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+                    >
+                      {verifying ? 'Verifying...' : 'Verify Full Chain'}
+                    </button>
+                    {verifyReport && (
+                      <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-700">
+                        <pre className="whitespace-pre-wrap text-xs">{JSON.stringify(verifyReport, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

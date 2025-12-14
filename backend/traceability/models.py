@@ -477,6 +477,12 @@ class Product(models.Model):
         blank=True,
         null=True
     )
+    image = models.ImageField(
+        upload_to='images/',
+        verbose_name='image',
+        blank=True,
+        null=True
+    )
     
     blockchain_hash = models.CharField(
         max_length=255,

@@ -299,7 +299,7 @@ const ManageProducts = () => {
               </button>
               <button
                 onClick={() => handleDelete(deleteModal.product.id)}
-                className="btn bg-red-600 text-white hover:bg-red-700"
+                className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-lg"
               >
                 Delete
               </button>

@@ -213,10 +213,10 @@ class ProductStepInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Interface admin pour les produits."""
-    
+
     list_display = (
         'name', 'sku', 'manufacturer', 'batch_number', 
-        'current_status', 'created_at', 'qr_code_preview'
+        'current_status', 'created_at', 'qr_code_preview','image'
     )
     
     list_filter = ('current_status', 'category', 'manufacturer', 'production_date')
@@ -229,7 +229,7 @@ class ProductAdmin(admin.ModelAdmin):
     
     fieldsets = (
         (_('Informations de base'), {
-            'fields': ('name', 'description', 'sku', 'batch_number', 'category')
+            'fields': ('name', 'description', 'sku', 'batch_number', 'category','image')
         }),
         (_('Fabrication'), {
             'fields': ('manufacturer', 'production_date', 'expiration_date')
@@ -260,6 +260,16 @@ class ProductAdmin(admin.ModelAdmin):
         return "—"
     
     qr_code_preview.short_description = 'QR Code'
+
+    def image_preview(self, obj):
+
+        if obj.image:
+            return format_html(
+                '<img src="{}" width="50" height="50" style="object-fit:cover;" />',
+            obj.image.url
+        )
+        return "—"
+    image_preview.short_description = 'Image'
     
     def qr_code_image(self, obj):
         """Image du QR code en grand."""
